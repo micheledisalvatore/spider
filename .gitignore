@@ -1,0 +1,6 @@
+.idea
+spider.properties
+spider.xml
+module_spider.xml
+spider.iml
+dist/spider.jar
