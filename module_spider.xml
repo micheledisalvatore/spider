@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_spider" default="compile.module.spider">
+  <dirname property="module.spider.basedir" file="${ant.file.module_spider}"/>
+  
+  
+  <property name="compiler.args.spider" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="spider.output.dir" value="${module.spider.basedir}/out/production/Spider"/>
+  <property name="spider.testoutput.dir" value="${module.spider.basedir}/out/test/Spider"/>
+  
+  <path id="spider.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="spider.module.production.classpath">
+    <pathelement location="${basedir}/../../Downloads/jsoup-1.7.3.jar"/>
+    <pathelement location="${basedir}/../../Downloads/database/mysql-connector-java-5.1.22-bin.jar"/>
+  </path>
+  
+  <path id="spider.runtime.production.module.classpath">
+    <pathelement location="${spider.output.dir}"/>
+    <pathelement location="${basedir}/../../Downloads/jsoup-1.7.3.jar"/>
+    <pathelement location="${basedir}/../../Downloads/database/mysql-connector-java-5.1.22-bin.jar"/>
+  </path>
+  
+  <path id="spider.module.classpath">
+    <pathelement location="${spider.output.dir}"/>
+    <pathelement location="${basedir}/../../Downloads/jsoup-1.7.3.jar"/>
+    <pathelement location="${basedir}/../../Downloads/database/mysql-connector-java-5.1.22-bin.jar"/>
+  </path>
+  
+  <path id="spider.runtime.module.classpath">
+    <pathelement location="${spider.testoutput.dir}"/>
+    <pathelement location="${spider.output.dir}"/>
+    <pathelement location="${basedir}/../../Downloads/jsoup-1.7.3.jar"/>
+    <pathelement location="${basedir}/../../Downloads/database/mysql-connector-java-5.1.22-bin.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.spider">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.spider">
+    <patternset refid="excluded.from.module.spider"/>
+  </patternset>
+  
+  <path id="spider.module.sourcepath">
+    <dirset dir="${module.spider.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.spider" depends="compile.module.spider.production,compile.module.spider.tests" description="Compile module Spider"/>
+  
+  <target name="compile.module.spider.production" depends="register.custom.compilers" description="Compile module Spider; production classes">
+    <mkdir dir="${spider.output.dir}"/>
+    <javac2 destdir="${spider.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.spider}"/>
+      <bootclasspath refid="spider.module.bootclasspath"/>
+      <classpath refid="spider.module.production.classpath"/>
+      <src refid="spider.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.spider"/>
+    </javac2>
+    
+    <copy todir="${spider.output.dir}">
+      <fileset dir="${module.spider.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.spider.tests" depends="register.custom.compilers,compile.module.spider.production" description="compile module Spider; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.spider" description="cleanup module">
+    <delete dir="${spider.output.dir}"/>
+    <delete dir="${spider.testoutput.dir}"/>
+  </target>
+</project>
